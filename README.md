@@ -6,6 +6,8 @@ Free marketing skills for your AI agent: research, positioning, copy, pages, SEO
 
 Made by James Dickerson ([@boringmarketer](https://x.com/boringmarketer)). More at [boringmarketing.com](https://boringmarketing.com). Need clients to use this on? [boringfunnels.com](https://boringfunnels.com) finds local businesses losing customers (I make it). Want agents built for your team? [Work with us](https://boringmarketing.com/#work).
 
+Want the bigger picture? The free [forward-deployed marketing playbook](https://boringmarketing.com/playbook) is 49 boards on building the marketing brain your agents run on, with these skills as the context layer.
+
 ## Install
 
 Any agent (Claude Code, Codex, Cursor and others):
