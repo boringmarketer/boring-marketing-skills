@@ -112,7 +112,7 @@ Every skill works with your agent's own web access. When you want more, this is 
 
 | Job | What we use | Cost |
 |---|---|---|
-| Web search for agents | Exa | Free tier, then pay as you go |
+| Web search for agents | Exa, Parallel or Perplexity ([setup](skills/start-here/references/web-search.md)) | Built-in search is free. Optional providers have their own pricing |
 | Read, crawl and extract pages | Firecrawl | Free tier |
 | Search volumes, SERPs, keyword data | DataForSEO | Pay as you go |
 | Images and GIFs | GPT Image 2.6 (OpenAI) | Pay per image |

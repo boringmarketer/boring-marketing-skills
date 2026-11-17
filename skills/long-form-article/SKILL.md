@@ -9,8 +9,10 @@ metadata:
     layer: distribution
     reads: [voice-profile, positioning#chosen-angle, audience#pain-language, learnings]
     writes: []
-    optional-keys: [FIRECRAWL_API_KEY, EXA_API_KEY, REPLICATE_API_TOKEN]
+    optional-keys: [FIRECRAWL_API_KEY, EXA_API_KEY, PARALLEL_API_KEY, PERPLEXITY_API_KEY, REPLICATE_API_TOKEN]
     enhances_with:
+      - toolset: web-search
+        gains: "finds studies and other primary sources"
       - toolset: web-scrape
         gains: "reads full studies and source pages instead of search snippets, so every number is checked at the source"
       - toolset: creative
@@ -57,7 +59,7 @@ Pull answers from the conversation first. Ask only for gaps, all in one message,
 
 ## Phase 2: Research
 
-Fan out in parallel (one research subagent per source type, each with a small fetch and time budget; one WebSearch in the main thread first to confirm the web works):
+Fan out in parallel (one research subagent per source type, each with a small fetch and time budget). Run one [web search](../start-here/references/web-search.md) in the main thread first:
 
 - **The numbers.** Load `references/research-sources.md`. Government data and large studies first. Vendor numbers carry "(vendor data)". Every number goes into `sources.md` with the source, its date, the sample, the URL and the exact figure.
 - **The author's own material.** Only files in this workspace or what the user hands over. This is where the voice and the first-hand stories come from. Never the assistant's memory or other folders.
@@ -66,7 +68,7 @@ Fan out in parallel (one research subagent per source type, each with a small fe
 
 A number without a source gets cut or marked **[confirm]**. Specific beats round: "2,412 businesses" beats "thousands", and always says who counted.
 
-We use Exa to find the studies and primary sources a keyword search misses (free tier, then pay as you go), and Firecrawl to read each one in full so every figure is checked at the source (free tier of 1,000 credits a month, no card). Without them, WebSearch and WebFetch do the job. Open the source page for every figure rather than trusting a snippet.
+Find studies and primary sources with the search provider. We use Firecrawl to read each page in full (free tier of 1,000 credits a month, no card), with WebFetch as the free fallback. Open the source page for every figure.
 
 ## Phase 3: The outline (settle the shape before drafting)
 

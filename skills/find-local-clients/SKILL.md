@@ -9,8 +9,10 @@ metadata:
     layer: growth
     reads: [positioning#chosen-angle, learnings]
     writes: []
-    optional-keys: [GOOGLE_PLACES_API_KEY, FIRECRAWL_API_KEY, TREG_TOKEN]
+    optional-keys: [GOOGLE_PLACES_API_KEY, FIRECRAWL_API_KEY, TREG_TOKEN, EXA_API_KEY, PARALLEL_API_KEY, PERPLEXITY_API_KEY]
     enhances_with:
+      - toolset: web-search
+        gains: "finds public candidates to verify"
       - toolset: web-scrape
         gains: "reads business sites built in JavaScript that a plain fetch returns empty"
 ---
@@ -29,7 +31,7 @@ Only if `./brand/`, `./brands/` or `MARKETING.md` exists (nothing to load otherw
 
 The brand files here are the agency's own. `positioning#chosen-angle` says what the agency sells, so problems it can fix rank above problems it can't. If `learnings.md` has `[find-local-clients]` or `[pitch-the-fix]` entries (which problems got replies), apply them. One line in the note, and only if one changed a ranking or a pick.
 
-Prospect facts go in the campaign folder only. Never save a business, an owner or a score to the assistant's own memory or notes (prospect data stays in the workspace). Before any fan-out, run one WebSearch in the main thread. If it is denied, work only from a list the user provides and say so in the note. Never build a business list from model knowledge; a list from memory is an invented list.
+Prospect facts go in the campaign folder only. Never save a business, an owner or a score to the assistant's own memory or notes (prospect data stays in the workspace). Before any fan-out, run one [web search](../start-here/references/web-search.md) in the main thread. If no search tool works, work only from a list the user provides and say so in the note. Never build a business list from model knowledge.
 
 ## Phase 1: Pick the cell
 
@@ -48,7 +50,7 @@ Write the cell to `./campaigns/prospects-{trade}-{town}/cell.md`: trade, town an
 Free sources, in the order that gives the cleanest list. Load `references/free-sources-facts.md` for the details and the dated facts behind each one.
 
 1. **The state license list**, where the trade is licensed. It is the most complete list there is and it names the license holder, who is often the owner. Some boards publish the whole list as a free download; Texas plumbing is one.
-2. **Search results.** WebSearch 4 to 6 phrasings a customer would type: "[trade] [town]", "emergency [trade] [town]", "[trade] near [neighborhood]", "best [trade] in [town]", plus the money service ("water heater replacement [town]"). Record names, sites and phones.
+2. **Search results.** Search 4 to 6 phrasings a customer would type: "[trade] [town]", "emergency [trade] [town]", "[trade] near [neighborhood]", "best [trade] in [town]", plus the money service ("water heater replacement [town]"). Record names, sites and phones.
 3. **Directories.** BBB (years in business, management names, complaint count), the trade association's member directory, the Chamber of Commerce, Angi and Nextdoor where they load. Yelp often blocks fetches; skip it when it does and say so.
 4. **Optional: the Google Places API** with the user's own key. It is the terms-friendly way to pull rating, review count, website, phone and open-or-closed for the whole cell in one run: `python3 ${CLAUDE_SKILL_DIR}/scripts/places_search.py "plumber in Dallas, TX" "emergency plumber Dallas, TX" > places.csv`. The free monthly allowance covers several cells. It returns at most five reviews per place and no owner replies, so Phase 4 is still by hand.
 5. **Optional: treg** (`TREG_TOKEN`). We use treg when we want SERP, lead or ad data from several providers without opening an account at each: one token, pay per call. Without it, steps 1 to 3 and the hand checks in Phase 4 build the same list. The hard rule below applies to anything pulled this way.

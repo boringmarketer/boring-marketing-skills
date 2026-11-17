@@ -9,8 +9,10 @@ metadata:
     layer: foundation
     reads: [positioning#market-assessment, brand-manifest]
     writes: [audience, voc]
-    optional-keys: [FIRECRAWL_API_KEY, EXA_API_KEY, SCRAPECREATORS_API_KEY, TREG_TOKEN]
+    optional-keys: [FIRECRAWL_API_KEY, EXA_API_KEY, PARALLEL_API_KEY, PERPLEXITY_API_KEY, SCRAPECREATORS_API_KEY, TREG_TOKEN]
     enhances_with:
+      - toolset: web-search
+        gains: "finds public threads and review sources"
       - toolset: social-data
         gains: "mines documented Reddit and community material with deeper live evidence"
 ---
@@ -75,12 +77,9 @@ Rules that govern the map:
 - **Competitor reviews outrank your own.** Your reviews tell you about your product;
   competitor reviews tell you about the market. Competitor 1-star reviews are switching
   triggers verbatim. Default: at least one miner on a competitor review surface.
-- **Find the real subreddits, don't guess.** Search `site:reddit.com [category problem
-  language]` and verify the sub is alive (posts in the last week, comments per post >3)
-  before assigning a miner to it. A dead sub burns a slot. We use Exa for this search:
-  it matches on meaning, so a thread that describes the problem in the customer's own
-  words comes up even when no keyword matches (free tier, then pay as you go). Without
-  it, the `site:reddit.com` search in WebSearch does the job.
+- **Find the real subreddits, don't guess.** Use [web search](../start-here/references/web-search.md) with a Reddit domain
+  filter or `site:reddit.com` and the category problem language. Verify the sub is
+  alive (posts in the last week, comments per post >3) before assigning a miner to it.
 - **One source per distinct *conversation type*.** Reviews = post-purchase judgment.
   Reddit/forums = pre-purchase confusion and comparison. YouTube comments = aspiration
   and skepticism. Social = identity and hot takes. You want coverage across types, not
@@ -97,7 +96,7 @@ audience.md, not chat output. Do not ask permission to mine unless access is amb
 
 ## Phase 2: Parallel mining
 
-**Check the web first.** Before dispatching, make sure your own WebSearch works (the
+**Check the web first.** Before dispatching, make sure your chosen search tool works (the
 Phase 1 subreddit search counts; otherwise run one). If it is denied or errors, the
 miners will be blocked too: don't dispatch them, go to Interview fallback and say why in
 one line. If miners come back blocked anyway, do the same with whatever they returned.
@@ -117,12 +116,12 @@ Fan out **one subagent per source**, all in parallel, using the Task/Agent tool
    astroturf detection, "I wish it..." flags).
 3. Budget: ≤ 5 page fetches, ≤ 8 minutes, no sub-agents. Return the pack when either is
    hit. Scraping order: Firecrawl MCP tools if available (`FIRECRAWL_API_KEY` unlocks this),
-   else WebFetch/WebSearch. Scrape real pages. Quotes from search-result snippets are
+   else WebFetch. Use the selected search tool to locate public pages. Quotes from search-result snippets are
    acceptable only with the full source URL, never from memory.
    Enhanced (`SCRAPECREATORS_API_KEY` set): for Reddit and community material, use
    ScrapeCreators (paid, with a small free allowance; it reads Reddit, YouTube, TikTok, X and
    other posts and comments a logged-out page hides) and only its documented endpoints; baseline:
-   use WebFetch/WebSearch on public pages and label the smaller sample. Or treg, one token
+   use web search and WebFetch on public pages and label the smaller sample. Or treg, one token
    for many data APIs (pay per call), if you'd rather not open a separate account.
 4. The return contract: an **evidence pack** of 8-15 entries, no prose narrative:
 
@@ -277,8 +276,8 @@ answers turn the draft into evidence:
 6. What's the one belief about your market you'd bet money on that you've never verified?
 
 voc.md holds only real words: write it from answers to Q3, marked `source: founder-recall`;
-never invent quotes. If the web was the blocker, say in one line that allowing WebSearch
-and WebFetch (`/permissions`) and re-running upgrades the draft to mined research.
+never invent quotes. If the web was the blocker, say in one line what search and page
+access a live rerun needs.
 
 ## Output
 

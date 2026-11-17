@@ -9,8 +9,10 @@ metadata:
     layer: foundation
     reads: [brand-manifest, learnings, assets]
     writes: [stack, brand-manifest, preferences, voice-profile, positioning, audience, voc, competitors]
-    optional-keys: [FIRECRAWL_API_KEY, SCRAPECREATORS_API_KEY]
+    optional-keys: [FIRECRAWL_API_KEY, SCRAPECREATORS_API_KEY, EXA_API_KEY, PARALLEL_API_KEY, PERPLEXITY_API_KEY]
     enhances_with:
+      - toolset: web-search
+        gains: "finds the business, public reviews and peers"
       - toolset: web-scrape
         gains: "the first run and audits read full pages instead of summaries"
       - toolset: social-data
@@ -178,16 +180,17 @@ through the new-client path.
 
 Budget: about 3 minutes, at most 8 web calls (searches plus fetches), no subagents. One
 review page is one fetch; never paginate. Never fetch login-walled hosts (instagram,
-facebook, linkedin posts, x.com, threads, Google Maps pages). If the first search is
-denied, write the files from what the user said, labelled `Data: MODEL KNOWLEDGE`, with
+facebook, linkedin posts, x.com, threads, Google Maps pages). If no search tool works,
+write the files from what the user said, labelled `Data: MODEL KNOWLEDGE`, with
 no voc.md, and say so.
 
 1. **Scaffold.** Create `./brand/` with `brand.yaml` (name, slug, url), empty
    `assets.md` and `learnings.md`. Scan the workspace root for `README.md`,
    `MARKETING.md`, `docs/`, `content/` or site source; use what exists as evidence
    labelled `Data: LOCAL DOCS` (unpublished plans are intent, not fact).
-2. **Find (1 search).** The business name (plus town for a local business): the site,
-   how customers rate it and where its reviews live.
+2. **Find (1 search).** Use [web search](references/web-search.md) for the business name
+   (plus town for a local business). Find the site, how customers rate it, and where its
+   reviews live.
 3. **Read the site (2-3 fetches).** The homepage, the main offer or services page, and
    one more only if needed (pricing; for local, the contact or areas page). Record what
    it sells, to whom, the promise on the first screen, the proof shown, the offer, and
@@ -198,9 +201,10 @@ no voc.md, and say so.
    site's own reviews page); software → G2, Capterra, an app store; shops and creators
    → product reviews, testimonials, a public thread. Pull 5-10 verbatim lines with URLs:
    what they praise, what they complain about, the words they use for the problem.
-5. **Who shows up first (1 search).** Local: `<trade> <town>`, the 3-5 names in the map
-   pack or top results with ratings when visible. Others: the main problem search or
-   `<category> alternatives`, 3-5 names. Don't fetch their sites in the lite read.
+5. **Who shows up (1 search).** Local: `<trade> <town>`, the 3-5 names in the map pack
+   or top results with ratings when visible. Treat general search results as candidate
+   competitors. Others: the main problem search or `<category> alternatives`, 3-5 names.
+   Don't fetch their sites in the lite read.
 6. **Write the core files**, each short, each headed `Depth: lite` and a data label:
    - `brand.yaml`: the `brand:` block with `category`, `depth: lite`, `services`, and
      for local `phone`, `city`, `service_area` and `rating` (as seen, with source and
@@ -379,11 +383,10 @@ it and name it in one line. Never read the whole file back unasked.
 Run on first run, on "refresh stack" or "what's connected", and inside the Stack
 advisor. Write results to `stack.md`.
 
-1. **MCP servers and connectors first.** Firecrawl (research everywhere), Replicate or an
-   image/video MCP (/creative), a browser tool (live page checks), Zapier or Composio
-   (ESP, CRM, call tools). Inventory by NAME from the tool list you can see; never call
-   a connector to detect it, and never call one during onboarding or research (the data
-   boundary: read only the workspace and the public web).
+1. **MCP servers and connectors first.** Firecrawl, public web search (Exa, Parallel
+   or Perplexity), Replicate or an image/video MCP (/creative), a browser tool (live page
+   checks), Zapier or Composio (ESP, CRM, call tools). Inventory by name from the tool
+   list. During onboarding and research, read only the workspace and the public web.
 2. **Then `.env` keys** each skill declares in `optional-keys`, for example
    `REPLICATE_API_TOKEN`, `KIT_API_KEY` / `BEEHIIV_API_KEY`, `META_ACCESS_TOKEN`,
    `GOOGLE_ADS_DEVELOPER_TOKEN`, `GOOGLE_APPLICATION_CREDENTIALS` (GA4, Search Console),

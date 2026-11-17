@@ -9,7 +9,10 @@ metadata:
     layer: execution
     reads: [voice-profile, audience#segments, audience#desires-buying-triggers, learnings]
     writes: []
-    optional-keys: [BEEHIIV_API_KEY, BEEHIIV_PUBLICATION_ID, KIT_API_KEY, GHOST_ADMIN_API_KEY, GHOST_URL, EXA_API_KEY, FIRECRAWL_API_KEY]
+    optional-keys: [BEEHIIV_API_KEY, BEEHIIV_PUBLICATION_ID, KIT_API_KEY, GHOST_ADMIN_API_KEY, GHOST_URL, EXA_API_KEY, PARALLEL_API_KEY, PERPLEXITY_API_KEY, FIRECRAWL_API_KEY]
+    enhances_with:
+      - toolset: web-search
+        gains: "finds sources for each content pillar"
 ---
 
 # Newsletter
@@ -126,10 +129,9 @@ unless the user wants supporting data. Their content comes from the user's mater
 only to verify specific claims or pull a supporting stat.
 
 Fan out **one subagent per content pillar** (3-5 pillars from the audience's interests and the
-edition's topic) using the Task/Agent tool. WebSearch and WebFetch do this for free. We use
-Exa to find sources a keyword search misses (free tier, then pay as you go) and Firecrawl to
-read each page as clean text (free tier of 1,000 credits a month, no card). Without them,
-WebSearch and WebFetch read what they can reach. Each subagent fetches actual pages and
+edition's topic) using the Task/Agent tool. Find sources with [web search](../start-here/references/web-search.md). WebFetch
+works with no key. We use Firecrawl to read each page as clean text (free tier of 1,000
+credits a month, no card). Each subagent fetches actual pages and
 returns an evidence pack, not prose. Save the packs to
 `./campaigns/newsletters/notes/{YYYY-MM-DD}-{topic-slug}.md`, never into the chat:
 

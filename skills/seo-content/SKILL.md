@@ -9,7 +9,10 @@ metadata:
     layer: execution
     reads: [voice-profile, keyword-plan, audience#dominant-emotion-sophistication, learnings]
     writes: []
-    optional-keys: [FIRECRAWL_API_KEY]
+    optional-keys: [FIRECRAWL_API_KEY, EXA_API_KEY, PARALLEL_API_KEY, PERPLEXITY_API_KEY]
+    enhances_with:
+      - toolset: web-search
+        gains: "finds candidate sources for conversational queries"
 ---
 
 # /seo-content: Content That Ranks AND Gets Cited
@@ -67,7 +70,7 @@ Run 2-3 keyword variations through search as well to widen the PAA pool. Never p
 This decides whether the piece can earn citations, which is half the win condition. Run it in parallel with Phase 1's competitor agents.
 
 1. **Capture the AI Overview** for the target query: its answer text and every cited source (URL + which claim it supports). If no AIO appears, note that. It means the query still resolves to classic results, and Track B effort shifts from "displace a citation" to "be first in when one appears."
-2. **Run 2-3 LLM-phrasing variants**: the question as someone would ask a chatbot, not type into Google ("what is X" → "explain X like I'm evaluating tools," "is X worth it for a small team"). Search each; capture how the answer and citation set shift. Conversational phrasings often cite different sources than the keyword phrasing.
+2. **Run 2-3 conversational variants** ("explain X like I'm evaluating tools," "is X worth it for a small team"). Look for shifts in the answer and citation set where you can capture them. Use [web search](../start-here/references/web-search.md) for source discovery and label those results as a retrieval proxy.
 3. **For each cited source, record WHY it's cited** (judge against the drivers in `references/ai-search-facts.md`): extractable answer-block format? An original stat the answer quotes? Freshness? Clear entity attribution? Domain authority alone?
 4. **Record the AI citation gap** alongside the classic SERP gap, in the notes file (`./campaigns/content/{keyword-slug}.notes.md`, with the Phase 1 evidence packs). It is working data and is not pasted into chat:
 

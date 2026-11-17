@@ -9,8 +9,10 @@ metadata:
     layer: distribution
     reads: [social-canon, voice-profile, positioning#chosen-angle, learnings, algo-cache]
     writes: [social-canon, assets]
-    optional-keys: [FIRECRAWL_API_KEY, SCRAPECREATORS_API_KEY, X_BEARER_TOKEN, TREG_TOKEN, ZERNIO_API_KEY, BUFFER_ACCESS_TOKEN]
+    optional-keys: [FIRECRAWL_API_KEY, SCRAPECREATORS_API_KEY, X_BEARER_TOKEN, TREG_TOKEN, ZERNIO_API_KEY, BUFFER_ACCESS_TOKEN, EXA_API_KEY, PARALLEL_API_KEY, PERPLEXITY_API_KEY]
     enhances_with:
+      - toolset: web-search
+        gains: "finds public accounts and current discussions"
       - toolset: social-data
         gains: "extracts the social canon from documented X coverage"
       - toolset: social-api
@@ -69,9 +71,9 @@ Builds the user's content system in three phases. Output: `./brand/social-canon.
 
 ### Phase A: niche pattern scrape
 
-1. **Get the account list.** The user names 5 to 10 accounts whose content wins in their niche, or names the niche and you find candidates (web search for top accounts in the category; check each is active and actually in the niche). Mix sizes on purpose: include about two accounts under 10K followers. Small accounts that punch above their weight are the purest structural signal; big accounts win partly on status (see the attribution method in `references/pattern-extraction.md`). Confirm the list with the user before scraping.
+1. **Get the account list.** The user names 5 to 10 accounts whose content wins in their niche, or names the niche and you find candidates with [web search](../start-here/references/web-search.md). Check each is active and actually in the niche. Mix sizes on purpose: include about two accounts under 10K followers. Small accounts that punch above their weight are the purest structural signal; big accounts win partly on status (see the attribution method in `references/pattern-extraction.md`). Confirm the list with the user before scraping.
 
-2. **Fan out parallel subagents, one per account** (Task/Agent tool, `boring-marketing:research` type; `general-purpose` only when that type is unavailable). Sourcing order per agent: X API v2 if `X_BEARER_TOKEN` is set (user timeline, sorted by engagement); otherwise, when `SCRAPECREATORS_API_KEY` is set, only the X endpoints ScrapeCreators documents at docs.scrapecreators.com; otherwise WebFetch/WebSearch on public profiles and posts (Firecrawl for fuller page reads when its key is available), or report the gap. The merge step asks the user to paste 5 to 10 standout posts for any account that couldn't be fetched. LinkedIn profiles rarely scrape; for LinkedIn-first niches, expect pasted input and say so up front. If you would rather hold one key than one per provider, treg (`TREG_TOKEN`) is the one-key alternative. It is one token for many data APIs, social data among them, pay per call. Check its catalog for the platform you need before counting on it.
+2. **Fan out parallel subagents, one per account** (Task/Agent tool, `boring-marketing:research` type; `general-purpose` only when that type is unavailable). Sourcing order per agent: X API v2 if `X_BEARER_TOKEN` is set (user timeline, sorted by engagement); otherwise, when `SCRAPECREATORS_API_KEY` is set, only the X endpoints ScrapeCreators documents at docs.scrapecreators.com; otherwise use web search and WebFetch on public profiles and posts (Firecrawl for fuller page reads when its key is available), or report the gap. The merge step asks the user to paste 5 to 10 standout posts for any account that couldn't be fetched. LinkedIn profiles rarely scrape; for LinkedIn-first niches, expect pasted input and say so up front. If you would rather hold one key than one per provider, treg (`TREG_TOKEN`) is the one-key alternative. It is one token for many data APIs, social data among them, pay per call. Check its catalog for the platform you need before counting on it.
 
    Each subagent loads `references/pattern-extraction.md` (taxonomy and attribution method) and returns a **structured evidence pack of structural descriptions, never reusable content**:
 

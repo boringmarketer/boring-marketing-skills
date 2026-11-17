@@ -32,6 +32,11 @@ CAPABILITY_ORDER = [
     "scheduling",
 ]
 
+WEB_SEARCH_PROVIDERS = {
+    "exa": "EXA_API_KEY",
+    "parallel": "PARALLEL_API_KEY",
+    "perplexity": "PERPLEXITY_API_KEY",
+}
 ESP_PROVIDERS = [
     ("KIT_API_KEY", "kit"),
     ("CONVERTKIT_API_KEY", "kit"),
@@ -248,11 +253,14 @@ def build_manifest(env=None, root=".", brand=None, brand_dir=None, env_file=".en
         capabilities["web-scrape"] = _single_provider(False, None)
         capabilities["web-search"] = _single_provider(False, None)
 
-    if _has_value(merged_env, "EXA_API_KEY"):
-        entry = capabilities["web-search"]
-        entry["available"] = True
-        if "exa" not in entry["providers"]:
-            entry["providers"].append("exa")
+    search = capabilities["web-search"]
+    search["providers"].extend(
+        provider for provider, key in WEB_SEARCH_PROVIDERS.items()
+        if _has_value(merged_env, key)
+    )
+    if search["providers"]:
+        search["available"] = True
+        search["via"] = search["providers"][0]
 
     capabilities["social-data"] = provider_cap(merged_env, SOCIAL_DATA_PROVIDERS)
     capabilities["creative"] = provider_cap(merged_env, CREATIVE_PROVIDERS)

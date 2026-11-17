@@ -9,8 +9,10 @@ metadata:
     layer: strategy
     reads: [positioning, audience, competitors#competitor-profiles, voc, keyword-plan, brand-manifest]
     writes: [assets]
-    optional-keys: [GOOGLE_APPLICATION_CREDENTIALS, GSC_ACCESS_TOKEN, FIRECRAWL_API_KEY, DATAFORSEO_LOGIN, DATAFORSEO_PASSWORD]
+    optional-keys: [GOOGLE_APPLICATION_CREDENTIALS, GSC_ACCESS_TOKEN, FIRECRAWL_API_KEY, DATAFORSEO_LOGIN, DATAFORSEO_PASSWORD, EXA_API_KEY, PARALLEL_API_KEY, PERPLEXITY_API_KEY]
     enhances_with:
+      - toolset: web-search
+        gains: "finds public sources for service and town research"
       - toolset: search-console
         gains: "the site's real queries and the page that wins each one, instead of autocomplete alone"
       - toolset: web-scrape
@@ -129,7 +131,7 @@ Build the market map: services down the side, towns across the top. Bound it to 
 
 Before a Standard or Full run with a paid tool, say roughly how many checks it takes and what they cost from the provider's price page, and let the user choose. Say which depth you ran in the plan. Checking every service in every town at every depth is the tripwire: it buys a spreadsheet, not a decision.
 
-Run one web search in the main thread first; if it works, fan out one research subagent per service, in parallel (Task tool, `general-purpose` when the plugin's research type is unavailable), each checking its towns within the research budget (40 fetches, 8 minutes, no sub-agents of its own) and returning facts with URLs, not prose. If web access is denied, build the map from the exports and label the observations unobserved.
+Run one [web search](../start-here/references/web-search.md) in the main thread first. Use it to find public sources on services and towns. Capture rankings and map packs with the location-specific checks below. If web access works, fan out one research subagent per service, in parallel (Task tool, `general-purpose` when the plugin's research type is unavailable), each checking its towns within the research budget (40 fetches, 8 minutes, no sub-agents of its own) and returning facts with URLs, not prose. If no search tool works, build the map from the exports and label the observations unobserved.
 
 For each cell with demand evidence, record:
 - the business's map pack position for "[service] near me" from the town's center, and who holds the top 3;

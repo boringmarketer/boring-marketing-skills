@@ -9,7 +9,10 @@ metadata:
     layer: foundation
     reads: [positioning, audience]
     writes: [voice-profile]
-    optional-keys: [FIRECRAWL_API_KEY, EXA_API_KEY]
+    optional-keys: [FIRECRAWL_API_KEY, EXA_API_KEY, PARALLEL_API_KEY, PERPLEXITY_API_KEY]
+    enhances_with:
+      - toolset: web-search
+        gains: "finds public interviews, social profiles, and newsletters"
 ---
 
 # Brand Voice
@@ -147,10 +150,9 @@ single parallel batch:
 | Spoken | YouTube videos and podcast appearances (transcripts) | Search "{brand/founder} podcast OR youtube", fetch transcripts |
 | Newsletter | Public archive (Beehiiv/Substack/site) | Locate archive, fetch 2-3 editions |
 
-WebSearch and WebFetch cover the website, spoken and newsletter rows for free. We use
-Firecrawl to read the website row as clean text (free tier of 1,000 credits a month, no
-card) and Exa to find the spoken and newsletter sources a keyword search misses (free tier,
-then pay as you go). Without them, WebFetch reads pages as summaries and the Sources and assumptions note says so.
+Use [web search](../start-here/references/web-search.md) to find spoken and newsletter sources. WebFetch is the free path
+for page reads. We use Firecrawl to read the website row as clean text (free tier
+of 1,000 credits a month, no card). In Sources and assumptions, label pages read as summaries.
 
 Each subagent returns a **structured evidence pack**, not prose:
 

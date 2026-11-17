@@ -9,8 +9,10 @@ metadata:
     layer: foundation
     reads: [audience, competitors, voc, voice-profile#voice-summary, learnings]
     writes: [positioning, assets]
-    optional-keys: [FIRECRAWL_API_KEY, EXA_API_KEY]
+    optional-keys: [FIRECRAWL_API_KEY, EXA_API_KEY, PARALLEL_API_KEY, PERPLEXITY_API_KEY]
     enhances_with:
+      - toolset: web-search
+        gains: "finds competitors and alternatives pages"
       - toolset: web-scrape
         gains: "reads competitor sites, pricing pages and review pages in full instead of from search snippets"
 ---
@@ -99,14 +101,12 @@ That's a positioning problem, and Dunford's five components come before any angl
 
 Angles from model knowledge are guesses. Identify 3-5 competitors (from `competitors.md`,
 the user, or a search for "[category] for [audience]"; for local, see the Local section).
-Run one WebSearch in the main thread first; if it's denied, write a `Data: MODEL
-KNOWLEDGE` draft instead of fanning out.
+Run one [web search](../start-here/references/web-search.md) in the main thread to find competitors and alternatives pages.
+If no search tool works, write a `Data: MODEL KNOWLEDGE` draft without fanning out.
 
-We use Exa to find the competitors and "alternatives to" pages a keyword search misses
-(free tier, then pay as you go), and Firecrawl to read their first screens, pricing and
-review pages in full (free tier of 1,000 credits a month, no card). Without them,
-WebSearch and WebFetch do the work, and a page read as a summary is labelled that way in
-its evidence pack.
+We use Firecrawl to read first screens, pricing and review pages in full (free tier of
+1,000 credits a month, no card). WebFetch is the free fallback. Label pages read as
+summaries in the evidence pack.
 
 **One subagent per competitor, in parallel.** Each returns an evidence pack, not prose:
 

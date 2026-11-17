@@ -65,6 +65,25 @@ class Route(unittest.TestCase):
         self.assertEqual(plan["mode"], "task")
         self.assertEqual(plan["sequence"][0]["skill"], "seo-content")
 
+    def test_search_provider_from_brand_env_with_built_in_manifest(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            brand = root / "brands" / "acme"
+            brand.mkdir(parents=True)
+            (brand / ".env").write_text("PARALLEL_API_KEY=local-test-key\n")
+            manifest = root / "capabilities.json"
+            manifest.write_text(json.dumps({
+                "capabilities": {"web-search": {
+                    "available": True, "via": "websearch", "providers": ["websearch"],
+                }},
+            }))
+            plan = run(
+                ["--task", "brand-voice", "--brand", "acme", "--capabilities", str(manifest)],
+                env={"CLAUDECODE": "1"},
+                cwd=root,
+            )
+        self.assertEqual(plan["sequence"][0]["grounding"]["via"], ["webfetch", "websearch", "parallel"])
+
     def test_all_brands(self):
         root = Path(tempfile.mkdtemp())
         for slug in ("acme", "northwind"):

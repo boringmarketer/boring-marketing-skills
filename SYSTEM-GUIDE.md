@@ -200,7 +200,7 @@ tool, and when a skill names a paid tool it gives the free way too.
 
 | Job | What we use | Used by |
 |---|---|---|
-| Web search, page reads | Exa, Firecrawl | the research skills, `ai-search`, `first-screen-check`, `site-audit` |
+| Web search, page reads | Built-in search or Exa, Parallel or Perplexity for [source discovery](skills/start-here/references/web-search.md). Firecrawl for page reads | the research skills, `ai-search`, `first-screen-check`, `site-audit` |
 | Search volumes, SERPs | DataForSEO (treg as the one-key alternative) | `keyword-research`, `local-seo-plan`, `programmatic-seo` |
 | Images, video, voiceover | GPT Image, Seedance 2.5 via Higgsfield or Replicate, ElevenLabs | `creative` |
 | Meta and Google ads | Meta's official Ads MCP server and Ads CLI, Google Ads API | `meta-ads`, `paid-ads`, `google-ads-tracking` |

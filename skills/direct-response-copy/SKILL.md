@@ -9,8 +9,10 @@ metadata:
     layer: execution
     reads: [voice-profile, positioning#chosen-angle, audience#pain-language, voc, learnings]
     writes: [assets]
-    optional-keys: [FIRECRAWL_API_KEY, EXA_API_KEY]
+    optional-keys: [FIRECRAWL_API_KEY, EXA_API_KEY, PARALLEL_API_KEY, PERPLEXITY_API_KEY]
     enhances_with:
+      - toolset: web-search
+        gains: "finds competitor pages and customer reviews"
       - toolset: web-scrape
         gains: "reads the product, competitor and review pages in full for customer language"
 ---
@@ -67,10 +69,10 @@ best headlines are usually found, often verbatim, in customer language.
    for); 1-2 competitor pages (the saturated promises your copy must not sound like); one
    review source that fits (G2, an app store, Amazon or a Reddit thread for products;
    Yelp, BBB or review snippets for a local business). Each returns verbatim quotes with
-   URLs, not prose. WebFetch and WebSearch do this for free. We use Firecrawl to read the
-   pages in full (free tier of 1,000 credits a month, no card) and Exa to find the
-   competitor and review pages a keyword search misses (free tier, then pay as you go).
-   Without them the free tools read what they can reach. Park findings in `./campaigns/{name}/brief.md` (full runs only).
+   URLs, not prose. Use [web search](../start-here/references/web-search.md) to find the competitor and review pages.
+   WebFetch is the free path for page reads. We use Firecrawl to read pages in full
+   (free tier of 1,000 credits a month, no card). Park findings in
+   `./campaigns/{name}/brief.md` (full runs only).
 3. **If neither exists**, write from the user's input, label the deliverable
    `Data: MODEL KNOWLEDGE (verify claims before spending)`, and suggest /audience-research
    to build voc.md. Point at `preferences.md` or `MARKETING.md` for banned words by name;

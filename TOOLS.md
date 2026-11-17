@@ -8,7 +8,7 @@ Every skill works without these. When you want more, this is the stack we run, o
 
 | Job | What we use | Cost | Key | Used by |
 |---|---|---|---|---|
-| Web search for agents | Exa | Free tier, then pay as you go | `EXA_API_KEY` | research skills, `ai-search`, `competitive-intel` |
+| Web search for agents | Built-in search, Exa, Parallel or Perplexity | Built-in search is included. Provider pricing varies | Optional `EXA_API_KEY`, `PARALLEL_API_KEY` or `PERPLEXITY_API_KEY` | research skills, `ai-search`, `competitive-intel` |
 | Read, crawl and extract pages | Firecrawl | Free tier, then plans | `FIRECRAWL_API_KEY` | research skills, `first-screen-check`, `site-audit` |
 | Search volumes, SERPs, keyword data | DataForSEO | Pay as you go | `DATAFORSEO_LOGIN`, `DATAFORSEO_PASSWORD` | `keyword-research`, `local-seo-plan`, `programmatic-seo` |
 | Images and GIFs | GPT Image 2.6 (OpenAI) | Pay per image | `OPENAI_API_KEY` or `REPLICATE_API_TOKEN` | `creative` |
@@ -37,12 +37,11 @@ To see what is live right now, say "what should I add" to `/start-here` (or run 
 - Cost: free tier of 1,000 credits a month with no card; Hobby from $16 a month (billed yearly) for 5,000 credits; top-ups in $5 batches. A full onboarding is a few hundred page reads. [1]
 - Get it: firecrawl.dev → sign up → https://www.firecrawl.dev/app/api-keys
 
-## Web search (`web-search`): built in
-- Unlocks: live search-result checks (what ranks today, People Also Ask, autocomplete, recent platform changes).
-- Without it: nothing to add in Claude Code, Codex or Cursor, which all search the web. An agent without web search falls back to model knowledge and says so.
-- Used by: /keyword-research, /seo-content, /competitive-intel, /ai-search, /positioning-angles, /lead-magnet, /google-business-profile, /local-seo-plan, /reviews, /find-local-clients, /long-form-article
-- Cost: none. Included with your agent.
-- Get it: nothing to do.
+## Web search (`web-search`): built in, with optional providers
+- Unlocks: public source discovery, from competitor sites and reviews to primary sources. For Google rankings, autocomplete, People Also Ask and map packs, use the relevant capture steps in the skill.
+- Default: use your agent's built-in search. If live search is unavailable, follow the skill's evidence fallback.
+- Optional: Exa (`EXA_API_KEY`), Parallel (`PARALLEL_API_KEY`) and Perplexity (`PERPLEXITY_API_KEY`). Use an available search connector or configure a key. See the [web search guide](skills/start-here/references/web-search.md).
+- Cost: built-in search is included. See [Exa pricing](https://exa.ai/pricing), [Parallel pricing](https://docs.parallel.ai/getting-started/pricing) and [Perplexity pricing](https://docs.perplexity.ai/docs/getting-started/pricing) for API usage.
 
 ## Social data (`social-data`): ScrapeCreators (`SCRAPECREATORS_API_KEY`)
 - Unlocks: real posts, comments, profiles, transcripts and ad-library entries for audience research, competitor recon and social canon extraction, instead of whatever a public page shows a logged-out reader.
@@ -152,7 +151,6 @@ Scheduling is the only action here that touches a live account. The skill always
 
 ## Our picks with no section above
 
-- **Exa** (`EXA_API_KEY`): semantic web search built for agents. Finds pages a keyword search misses, and returns clean text. Get it at exa.ai.
 - **GPT Image 2.6** (`OPENAI_API_KEY`): OpenAI's image model (Flare for fast drafts, Sunburst for finals, GIFs up to 16 frames), called directly or through Replicate. Get it at platform.openai.com.
 - **Higgsfield** (`HF_API_KEY_ID`, `HF_API_KEY_SECRET`): one API for 50+ image and video models, including Seedance. Pay as you go. Get it at higgsfield.ai.
 - **ElevenLabs** (`ELEVENLABS_API_KEY`): voiceover and voice cloning for video ads and talking heads. Get it at elevenlabs.io.

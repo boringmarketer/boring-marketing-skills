@@ -9,8 +9,10 @@ metadata:
     layer: strategy
     reads: [voice-profile#tone-spectrum, positioning#chosen-angle, audience#pain-language, voc]
     writes: [assets]
-    optional-keys: [FIRECRAWL_API_KEY, EXA_API_KEY]
+    optional-keys: [FIRECRAWL_API_KEY, EXA_API_KEY, PARALLEL_API_KEY, PERPLEXITY_API_KEY]
     enhances_with:
+      - toolset: web-search
+        gains: "finds competitor opt-ins and resource pages"
       - toolset: web-scrape
         gains: "reads competitors' opt-in pages and resource hubs in full instead of from search snippets"
 ---
@@ -75,15 +77,14 @@ what converts. Get both with parallel subagents, never from memory.
 
 Identify 3-5 direct competitors (from `competitors.md`, positioning context, or a quick
 search of the niche; for local, the businesses that show up for "[service] [city]"). Run
-one WebSearch in the main thread first; if it's denied, write a draft from model knowledge
-instead of fanning out and say so once in the note. Then, all in parallel:
+one [web search](../start-here/references/web-search.md) in the main thread first. If no search tool works, write a draft from
+model knowledge and say so once in the note. With web access, fan out in parallel:
 
 - **One subagent per competitor (3-5):** read their homepage, blog sidebars and popups,
   `/free*`, `/resources`, `/tools`, the footer, and for local businesses any "price",
-  "estimate" or "financing" page. WebFetch and WebSearch work with no key. We use Firecrawl to
-  read these pages in full, JavaScript-built ones included (free tier of 1,000 credits a
-  month, `FIRECRAWL_API_KEY`), and Exa to find competitors and resource pages a keyword
-  search misses (free tier, then pay as you go, `EXA_API_KEY`). Return an evidence pack: every opt-in offer found, with the verbatim
+  "estimate" or "financing" page. Use web search to find competitors and resource pages.
+  WebFetch works with no key. We use Firecrawl to read these pages in full, JavaScript-built
+  ones included (free tier of 1,000 credits a month, `FIRECRAWL_API_KEY`). Return an evidence pack: every opt-in offer found, with the verbatim
   hook, format, what's gated and what's free, and the URL. Save the packs to
   `./campaigns/{name}/notes.md`; they are working data, not chat.
 - **One subagent for the ad libraries:** search facebook.com/ads/library (and

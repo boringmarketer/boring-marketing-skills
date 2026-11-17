@@ -317,8 +317,12 @@ CAP_ENHANCES = {
         "site-audit",
     ],
     "web-search": [
+        "start-here",
+        "brand-voice",
+        "audience-research",
         "keyword-research",
         "seo-content",
+        "direct-response-copy",
         "competitive-intel",
         "ai-search",
         "positioning-angles",
@@ -328,6 +332,8 @@ CAP_ENHANCES = {
         "reviews",
         "find-local-clients",
         "long-form-article",
+        "newsletter",
+        "social-content",
     ],
     "social-data": [
         "audience-research",
@@ -380,7 +386,7 @@ ADVISOR_LINES = {
     "ads": "For optimal results add your Meta or Google Ads token: /paid-ads reads real campaign data (see TOOLS.md).",
     "social-api": "For optimal results add X_BEARER_TOKEN: /social-content learns from your post performance (see TOOLS.md).",
     "scheduling": "For optimal results add BUFFER_ACCESS_TOKEN: atomized posts can be scheduled directly (see TOOLS.md).",
-    "web-search": "Web search is available in Claude Code by default; nothing to add.",
+    "web-search": "Use your agent's built-in web search or connect Exa, Parallel, or Perplexity (see TOOLS.md).",
 }
 
 
@@ -980,6 +986,10 @@ def _overlay_brand_manifest(base_manifest, detected_manifest):
         detected_entry = detected_caps.get(toolset, {})
         preferred = _prefer_detected_entry(base_entry, detected_entry)
         providers = _providers(preferred)
+        if toolset == "web-search":
+            providers = list(dict.fromkeys(
+                providers + _providers(detected_entry) + _providers(base_entry)
+            ))
         if "composio" in _providers(base_entry) or "composio" in _providers(
             detected_entry
         ):

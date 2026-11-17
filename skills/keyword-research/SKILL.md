@@ -9,8 +9,10 @@ metadata:
     layer: strategy
     reads: [positioning#chosen-angle, audience#watering-holes, competitors#competitor-profiles, voc]
     writes: [keyword-plan]
-    optional-keys: [DATAFORSEO_LOGIN, DATAFORSEO_PASSWORD, TREG_TOKEN, FIRECRAWL_API_KEY, GOOGLE_APPLICATION_CREDENTIALS, GSC_ACCESS_TOKEN]
+    optional-keys: [DATAFORSEO_LOGIN, DATAFORSEO_PASSWORD, TREG_TOKEN, FIRECRAWL_API_KEY, GOOGLE_APPLICATION_CREDENTIALS, GSC_ACCESS_TOKEN, EXA_API_KEY, PARALLEL_API_KEY, PERPLEXITY_API_KEY]
     enhances_with:
+      - toolset: web-search
+        gains: "finds candidate sources for conversational queries"
       - toolset: search-console
         gains: "the site's own queries, striking-distance pages and unserved demand, the best keyword data there is"
       - toolset: web-scrape
@@ -113,7 +115,7 @@ One research subagent per promising family, all in parallel (Task tool, `general
 
 Each subagent, for its family:
 1. **Results capture.** For the 5 to 10 strongest keywords, fetch the results page (Firecrawl search if available, else WebSearch), then the top 3 to 5 ranking pages. Record URL, title, content type, published or updated date, word count, structured data, from the fetched page, never from the snippet. Record the result features present and the questions Google shows, verbatim.
-2. **AI-surface capture.** Whether an AI Overview appears, whether it fully answers the query, which domains it cites. Then ask the conversational version through web search and note who gets cited for that phrasing.
+2. **AI-surface capture.** Whether an AI Overview appears, whether it fully answers the query, which domains it cites. Then run the conversational version through [web search](../start-here/references/web-search.md) and record which domains it retrieves as a proxy.
 3. **Competitor coverage.** `site:{domain}` searches per family for the domains in `competitors#competitor-profiles`: what they cover, how well, what they skip.
 
 4. **Winnability and a sampled tail** (with a volume API only). One bounded expansion from the family's strongest seed (the tight-sourcing rules above), then organic keyword difficulty for its 5 to 10 strongest terms in one batch call. Lower difficulty is more winnable. The ads "competition" field describes the paid auction, not ranking difficulty. Without a volume API, the results capture is the winnability evidence.

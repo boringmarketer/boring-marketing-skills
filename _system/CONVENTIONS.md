@@ -141,9 +141,11 @@ Anywhere the skill gathers external information:
   connectors — the data boundary enforced mechanically); `general-purpose` only when that
   type is unavailable. Each subagent returns a
   structured evidence pack (facts + verbatim quotes + URLs), not prose.
-- **Check the web before fanning out.** One WebSearch in the main thread first; if it is
-  denied, subagents will be too — skip the fan-out and write a `Data: MODEL KNOWLEDGE`
-  draft rather than return nothing.
+- **Check the web before fanning out.** Run one search in the main thread first.
+  The [web search guide](../skills/start-here/references/web-search.md) covers built-in
+  search and optional providers. If the subagents cannot access the selected tool,
+  give them public URLs to verify or use a tool they can access. If web access fails,
+  use the skill's evidence fallback.
 - **Scrape, don't guess.** Prefer Firecrawl MCP tools if available, else WebFetch/WebSearch.
   Word counts, H2 maps, pricing, schema presence are FACTS from fetched pages, never
   estimates from snippets.
@@ -159,7 +161,7 @@ Anywhere the skill gathers external information:
   otherwise skip the source, say so, and label the smaller sample.
 - **Data boundary (hard).** Research reads ONLY (a) files inside the current workspace
   and (b) the public web. Never the home directory, other repositories, notes or memory
-  folders, cloud drives, mail, or any MCP connector — unless the user names a specific
+  folders, cloud drives, mail, or private-data connectors — unless the user names a specific
   path or file in the request. Anything a customer's other clients could be in is out of
   bounds by default; cross-client leakage is the one failure a buyer will not forgive.
 - **Brand files are the only memory.** Never save client or brand facts to the
@@ -327,7 +329,7 @@ are `_system/scripts/route.py`.
 | Toolset | Enhanced via | Unlocks |
 |---|---|---|
 | web-scrape | FIRECRAWL_API_KEY | full-page, JS-rendered scraping for every research skill |
-| web-search | (built in) | live SERP checks |
+| web-search | built-in web search or an optional `EXA_API_KEY`, `PARALLEL_API_KEY`, or `PERPLEXITY_API_KEY` | public source discovery |
 | social-data | SCRAPECREATORS_API_KEY | real posts/comments/profiles for audience, competitor and social work |
 | creative | REPLICATE_API_TOKEN | image/video generation + vision QA in /creative |
 | esp | KIT_API_KEY, BEEHIIV_API_KEY (+ LOOPS/RESEND/MAILCHIMP/HUBSPOT detection) | direct sequence push (Kit, Beehiiv); detection + file handoff for the rest |
@@ -359,7 +361,7 @@ enhancement after the free path (§13); (5) per-client keys live in
 
 | Job | Our pick | Notes |
 |---|---|---|
-| Web search for agents | Exa | Semantic search, finds pages a keyword search misses |
+| Web search for agents | Exa | Semantic search. Parallel and Perplexity are also supported |
 | Read, crawl and extract pages | Firecrawl | Clean markdown, crawls, structured extraction; free tier |
 | Search volumes, SERPs, keyword data | DataForSEO | Pay as you go, no subscription |
 | Images | GPT Image (OpenAI) | Through the OpenAI API or Replicate |

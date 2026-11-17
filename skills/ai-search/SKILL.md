@@ -9,8 +9,10 @@ metadata:
     layer: growth
     reads: [positioning, keyword-plan, competitors#competitor-profiles, voc, brand-manifest]
     writes: []
-    optional-keys: [FIRECRAWL_API_KEY, EXA_API_KEY]
+    optional-keys: [FIRECRAWL_API_KEY, EXA_API_KEY, PARALLEL_API_KEY, PERPLEXITY_API_KEY]
     enhances_with:
+      - toolset: web-search
+        gains: "finds sources for the retrieval proxy"
       - toolset: web-scrape
         gains: "fetches the winning pages in full to read their answer blocks, dates and schema"
 ---
@@ -78,10 +80,10 @@ Ask the user once, before capture: "If you can paste real ChatGPT, Perplexity an
 Dispatch one subagent per question kind, in parallel (Task tool, `general-purpose` when the plugin's research type is unavailable), each returning an evidence pack, not analysis. Per question, three layers, each labeled in the notes file (never as tags in the report):
 
 1. **Google AI Overview.** Search the question (Firecrawl search if keyed, else WebSearch). Record the overview text and every cited URL when it appears. When your tools can't show it, record the top organic results and mark `AIO: not captured, organic proxy`.
-2. **Retrieval landscape** (the ChatGPT and Perplexity proxy). Run the conversational phrasing through web search and record which sources dominate. Fetch the top 2 or 3 enough to see whether they name the brand and competitors. Label `RETRIEVAL PROXY`.
+2. **Retrieval landscape** (the ChatGPT and Perplexity proxy). Run the conversational phrasing through [web search](../start-here/references/web-search.md) and record which sources dominate. Fetch the top 2 or 3 enough to see whether they name the brand and competitors. Label `RETRIEVAL PROXY`.
 3. **Model knowledge.** Answer from your own knowledge and record which brands you'd name unprompted, in what order. Label `MODEL KNOWLEDGE`.
 
-We use Exa for the retrieval layer: it matches on meaning, so a question phrased the way a buyer asks an assistant finds the pages that answer it, not only the pages that share its keywords (free tier, then pay as you go). We use Firecrawl to fetch the winning pages in full for Phase 4, with their answer blocks, dates and schema (free tier of 1,000 credits a month, no card). Without them, WebSearch and WebFetch do both jobs, and a page read as a summary is labelled that way. Either way the retrieval layer stays labelled `RETRIEVAL PROXY` in the notes, and the report's note says once, in plain words, which engines' rows are web-search retrieval rather than their live answers.
+We use Firecrawl to fetch the winning pages in full for Phase 4, with their answer blocks, dates and schema (free tier of 1,000 credits a month, no card). WebFetch is the free fallback. Label a page read as a summary. Even with Perplexity Search, the retrieval layer stays labelled `RETRIEVAL PROXY` in the notes. In the report, say once which engines' rows are based on retrieval proxies.
 
 **Local branch.** Add two surfaces that only exist for places, captured by hand because no free tool can read them: **Ask Maps** in the Google Maps app (US and India; check `references/local-ai-facts.md` for current availability) and the AI summary on the business's own Google listing where it appears. The user, or the agent with a browser set to the city, asks the question and pastes or screenshots the answer. Also run a **wrong-facts check** on every answer that names the business: phone, address or service area, hours, services, prices, name. One audit found an AI engine giving a local service company's phone number under a different company's name.
 

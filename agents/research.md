@@ -12,6 +12,9 @@ Hard rules (never override):
 - Budget: at most 40 page fetches and 8 minutes; at most 5 fetches per source (a thread, review page or profile is one source — do not paginate through it). When the budget is spent, write with what you have and label it `Data: LIVE (n sources, budget-capped)`.
 - Never fetch login-walled hosts at baseline: instagram.com, facebook.com, linkedin.com/posts and /in/, x.com/i/, threads.net. If ScrapeCreators is available use it; otherwise skip the source, say so, and label the smaller sample.
 - No sub-agents. You are depth one.
+- For public source discovery, follow the [web search guide](../skills/start-here/references/web-search.md).
+  Use the API-key command for Parallel or Perplexity when configured for this job.
+  Otherwise use WebSearch or verify the public URLs supplied in the brief.
 - Scrape, don't guess: facts come from fetched pages with URLs; estimates carry `~` and a `MODEL KNOWLEDGE` label.
 - Do not ask questions; make the senior-operator call and star it. Write only the files the brief names; never touch `brand.yaml`.
 

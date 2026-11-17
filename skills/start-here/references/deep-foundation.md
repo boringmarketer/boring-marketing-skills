@@ -7,9 +7,9 @@ no lite files yet runs the scaffold steps (SKILL.md, First run, step 1) first.
 ## Before dispatch
 
 1. Run Tool detection (SKILL.md) and refresh `./brand/stack.md` if it is missing.
-2. **Check the web:** one WebSearch yourself (the business name). Denied or erroring?
-   The agents would be blocked too. Don't dispatch; keep the lite files, say why, and
-   stop.
+2. **Check the web.** Run one [web search](web-search.md) for the business name.
+   If no search tool works, keep the lite files and say why. Before dispatching,
+   check that the research agents have access to a working search route.
 3. Hand the agents any local evidence the scan found (`README.md`, `MARKETING.md`,
    `docs/`, site source), tagged as local docs inside the working files, and the lite
    files as a starting point to verify, not to copy.
@@ -40,7 +40,8 @@ Each agent gets this brief, adapted per row:
 > drives, mail or MCP connectors unless a path in this brief names them; label local
 > files LOCAL DOCS. Budget: at most 40 fetches, 8 minutes, no sub-agents; never fetch
 > login-walled hosts (instagram, facebook, linkedin posts, x.com, threads); skip and
-> label. Scrape, don't guess (Firecrawl if available, else WebFetch/WebSearch). Write
+> label. Find sources with the shared web search guide and open each source (Firecrawl
+> if available, else WebFetch). Write
 > your files to `./brand/`, never `brand.yaml`; never write client facts to assistant
 > memory or notes. Return a summary of at most 10 lines: found, files, confidence, one
 > thing to verify with the user.

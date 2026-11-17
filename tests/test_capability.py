@@ -37,6 +37,36 @@ class Manifest(unittest.TestCase):
         self.assertEqual(m["capabilities"]["web-scrape"]["via"], "webfetch")
         self.assertEqual(m["capabilities"]["web-search"]["via"], "websearch")
 
+    def test_each_optional_search_provider_works_without_builtin_search(self):
+        with tempfile.TemporaryDirectory() as root:
+            for key, provider in (
+                ("EXA_API_KEY", "exa"),
+                ("PARALLEL_API_KEY", "parallel"),
+                ("PERPLEXITY_API_KEY", "perplexity"),
+            ):
+                with self.subTest(provider=provider):
+                    m = cap.build_manifest(env={key: "search-test-value"}, root=root)
+                    self.assertEqual(m["capabilities"]["web-search"], {
+                        "available": True, "via": provider, "providers": [provider],
+                    })
+                    self.assertFalse(m["capabilities"]["web-scrape"]["available"])
+                    self.assertNotIn("search-test-value", json.dumps(m))
+
+    def test_builtin_search_stays_primary_with_optional_providers(self):
+        with tempfile.TemporaryDirectory() as root:
+            m = cap.build_manifest(
+                env={
+                    "CLAUDECODE": "1",
+                    "EXA_API_KEY": "x",
+                    "PARALLEL_API_KEY": "y",
+                    "PERPLEXITY_API_KEY": "z",
+                },
+                root=root,
+            )
+        search = m["capabilities"]["web-search"]
+        self.assertEqual(search["via"], "websearch")
+        self.assertEqual(search["providers"], ["websearch", "exa", "parallel", "perplexity"])
+
     def test_firecrawl_and_social_data(self):
         m = cap.build_manifest(
             env={

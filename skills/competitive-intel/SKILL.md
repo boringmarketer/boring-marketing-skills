@@ -9,8 +9,10 @@ metadata:
     layer: foundation
     reads: [positioning#market-assessment, competitors, brand-manifest]
     writes: [competitors, assets, brand-manifest]
-    optional-keys: [FIRECRAWL_API_KEY, EXA_API_KEY, SCRAPECREATORS_API_KEY, TREG_TOKEN]
+    optional-keys: [FIRECRAWL_API_KEY, EXA_API_KEY, PARALLEL_API_KEY, PERPLEXITY_API_KEY, SCRAPECREATORS_API_KEY, TREG_TOKEN]
     enhances_with:
+      - toolset: web-search
+        gains: "finds peers and comparison pages"
       - toolset: social-data
         gains: "adds documented creator, social, and ad-library recon to public-page teardowns"
 ---
@@ -54,21 +56,21 @@ Target 3-6 competitors. Resolve in this order:
 3. **Neither** → for a local service business, switch to **LOCAL** mode (review sites
    and "alternatives" searches don't list plumbers; the map does). Otherwise discover from the `Category:` line in `positioning#market-assessment`: search "best `<category>` tools", "`<category>` alternatives", and the G2/Capterra category page. Pick by ICP overlap, not size.
 
-We use Exa for the discovery searches: it finds the pages a keyword search misses, such as a smaller peer or an up-and-comer (free tier, then pay as you go). Without it, the same searches in WebSearch work.
+Use [web search](../start-here/references/web-search.md) for discovery, including smaller peers and up-and-comers.
 
 Roster judgment: one aspirational leader (sets the category's vocabulary), two or three true peers (fight for the same buyer this quarter), one up-and-comer (shows where the category is moving). A roster of five peers tells you nothing about trajectory; a roster of five giants tells you nothing actionable. More than six competitors dilutes the synthesis. Depth beats coverage.
 
 ### Phase 2: Parallel evidence collection
 
-**Check the web first.** Phase 1's discovery search counts; otherwise run one WebSearch yourself before dispatching. If it is denied or errors, the subagents will be blocked too: don't dispatch. Write `competitors.md` from model knowledge instead (roster and known positioning, every price and count `UNVERIFIED`), labeled `Data: MODEL KNOWLEDGE (not checked live)` in the file, and say in one line in chat that allowing WebSearch and WebFetch (`/permissions`) and re-running makes it live.
+**Check the web first.** Phase 1's discovery search counts. Otherwise run one search yourself before dispatching. If no search tool works, skip the fan-out. Write `competitors.md` from model knowledge (roster and known positioning, every price and count `UNVERIFIED`), label it `Data: MODEL KNOWLEDGE (not checked live)`, and say what web access a live rerun needs.
 
 Dispatch **one subagent per competitor, all in parallel** (Task tool, `general-purpose`). Budget per subagent: ≤ 40 fetches, ≤ 8 minutes, no sub-agents. Six surfaces is ~6-12 fetches, not a crawl. Each subagent gets the brief below plus the competitor's name and domain, and returns the evidence pack: facts, verbatim quotes, URLs. **No analysis in the packs**; synthesis happens centrally so claims can be compared across competitors. The packs are working data: save them to `./campaigns/competitive-intel/<date>-evidence.md` and never paste them into chat.
 
 Scraping rules for every subagent:
-- We use Firecrawl for the page reads (`firecrawl_scrape`, `firecrawl_search`): full-page reads, including the JavaScript-rendered pricing pages that a plain fetch returns as a shell (free tier of 1,000 credits a month, no card). Without it, use WebFetch + WebSearch, and if a fetch returns a shell, pull the page from a search cache and say so.
+- We use Firecrawl for the page reads (`firecrawl_scrape`, `firecrawl_search`): full-page reads, including the JavaScript-rendered pricing pages that a plain fetch returns as a shell (free tier of 1,000 credits a month, no card). Without it, use WebFetch and the selected search tool. If a fetch returns a shell, use a cached copy when available and say so.
 - Enhanced (`SCRAPECREATORS_API_KEY` set): for creator, social, and ad-library recon,
   use only endpoints that ScrapeCreators documents at docs.scrapecreators.com;
-  baseline: use WebFetch/WebSearch on public pages and report any gaps. Or treg, one token
+  baseline: use web search and WebFetch on public pages and report any gaps. Or treg, one token
   for many data APIs (pay per call), if you'd rather not open a separate account for social
   and ad data.
 - Quotes are **verbatim**: exact headline text, exact price strings ("$49/mo billed annually"), exact CTA labels. Paraphrase destroys the synthesis (you can't cluster claims you've already rewritten).
