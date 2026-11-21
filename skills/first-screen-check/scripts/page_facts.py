@@ -40,7 +40,10 @@ WIDGETS = {
     "popup": ["optinmonster", "sumo.com", "privy", "elementor-popup", "popupmaker",
               "justuno", "wisepops", "klaviyo"],
 }
-PHONE_RE = re.compile(r"(?:\+?1[\s.-]?)?\(?\b([2-9]\d{2})\)?[\s.-]?(\d{3})[\s.-]?(\d{4})\b")
+PHONE_RE = re.compile(
+    r"(?:\+?1[\s.-]?)?\(?\b([2-9]\d{2})\)?[\s.-]?(\d{3})[\s.-]?(\d{4})\b"
+    r"|(?<!\d)(\+[1-9]\d{0,2}(?:[\s.-]?\(?\d{1,4}\)?){2,5})(?!\d)"
+)
 
 
 class Recorder(urllib.request.HTTPRedirectHandler):
@@ -132,11 +135,13 @@ class Page(HTMLParser):
 
 def image_kb(url):
     _, _, h, _, _ = fetch(url, method="HEAD", timeout=15)
-    n = h.get("Content-Length") or h.get("content-length")
-    if not n:  # chunked responses report no length; download and count
+    raw = (h.get("Content-Length") or h.get("content-length") or "").strip()
+    if raw.isdigit():
+        n = int(raw)
+    else:  # chunked or malformed responses report no usable length; download and count
         _, _, _, body, _ = fetch(url, timeout=30)
         n = len(body)
-    return f"{int(n) // 1024} KB"
+    return f"{n // 1024} KB"
 
 
 def first_pos(words, phrase):
@@ -204,7 +209,11 @@ def main(argv=None):
             print(f"- tel link {href} at word {pos}")
     else:
         print("- NO tel: links in the HTML (check the rendered page; some sites add them with JavaScript)")
-    nums = sorted({"".join(m.groups()) for m in PHONE_RE.finditer(" ".join(p.words))})
+    nums = sorted({
+        re.sub(r"\D", "", m.group(0))
+        for m in PHONE_RE.finditer(" ".join(p.words))
+        if 8 <= len(re.sub(r"\D", "", m.group(0))) <= 15
+    })
     print(f"- distinct phone numbers in the text: {len(nums)} {nums[:6]}")
 
     print("\n## Promise and proof (word position of first mention; None = not in the HTML)")

@@ -38,7 +38,10 @@ UA = ("Mozilla/5.0 (iPhone; CPU iPhone OS 17_5 like Mac OS X) AppleWebKit/605.1.
       "(KHTML, like Gecko) Version/17.5 Mobile/15E148 Safari/604.1")
 TOP_CHARS = 600
 PROMISE_CHARS = 800
-PHONE_RE = re.compile(r"\(?\b\d{3}\)?[\s.\-]\d{3}[\s.\-]\d{4}\b")
+PHONE_RE = re.compile(
+    r"\(?\b\d{3}\)?[\s.\-]\d{3}[\s.\-]\d{4}\b"
+    r"|(?<!\d)\+[1-9]\d{0,2}(?:[\s.\-]?\(?\d{1,4}\)?){2,5}(?!\d)"
+)
 PARKED_RE = re.compile(r"domain (is )?for sale|buy this domain|this domain (may be|is) for sale|parked free|domain parking", re.I)
 URL_COLUMNS = ("site", "website", "url", "domain", "web")
 

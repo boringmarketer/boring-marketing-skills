@@ -15,8 +15,8 @@ local, never commit it).
 Examples:
   call_log.py summary calls.csv --hours "Mon-Fri 07:00-18:00,Sat 08:00-12:00"
   call_log.py summary calls.csv --texts messages.csv --out never-called-back.csv
-  call_log.py pause-test calls.csv --before 2026-03-02:2026-03-29 \\
-      --during 2026-03-30:2026-04-26 --after 2026-04-27:2026-05-24
+  call_log.py pause-test calls.csv --before 2026-06-01:2026-06-28 \\
+      --during 2026-06-29:2026-07-26 --after 2026-07-27:2026-08-23
 """
 import argparse, csv, re, statistics, sys
 from collections import Counter, defaultdict
@@ -96,7 +96,16 @@ def parse_seconds(raw):
 
 
 def digits(raw):
-    d = re.sub(r"\D", "", raw or "")
+    s = (raw or "").strip()
+    d = re.sub(r"\D", "", s)
+    if not d:
+        return ""
+    # Normalize 11-digit NANP (+1XXXXXXXXXX / 1XXXXXXXXXX) to 10 digits;
+    # keep full international E.164 digits intact so non-US callers do not collide.
+    if len(d) == 11 and d.startswith("1"):
+        return d[1:]
+    if s.startswith("+") or len(d) > 11:
+        return d
     return d[-10:] if len(d) >= 10 else d
 
 
@@ -136,7 +145,7 @@ def load(path, a, kind="call"):
             continue
         d = norm(r.get(cols["direction"], "")) if cols["direction"] else "incoming"
         missed_dir = "missed" in d
-        inbound = missed_dir or d.startswith("in") or "incoming" in d or "inbound" in d
+        inbound = missed_dir or d in ("in", "inc") or "incoming" in d or "inbound" in d
         if a.line and cols["line"] and a.line.lower() not in (r.get(cols["line"]) or "").lower():
             continue
         secs = parse_seconds(r.get(cols["duration"])) if cols["duration"] else 0
@@ -163,16 +172,30 @@ def parse_hours(spec):
         start, end = [datetime.strptime(x, "%H:%M").time() for x in span.split("-")]
         if "-" in days:
             d0, d1 = (DAYS.index(x) for x in days.split("-"))
-            for d in range(d0, d1 + 1):
+            d = d0
+            while True:
                 hours[d] = (start, end)
+                if d == d1:
+                    break
+                d = (d + 1) % 7
         else:
             hours[DAYS.index(days)] = (start, end)
     return hours
 
 
 def in_hours(t, hours):
+    now = t.time()
     span = hours.get(t.weekday())
-    return bool(span) and span[0] <= t.time() < span[1]
+    if span:
+        start, end = span
+        if start < end and start <= now < end:
+            return True
+        if start > end and now >= start:
+            return True
+    prev = hours.get((t.weekday() - 1) % 7)
+    if prev and prev[0] > prev[1] and now < prev[1]:
+        return True
+    return False
 
 
 def pct(n, d):
